@@ -2,7 +2,7 @@ VERSION ?= $(shell git describe --tags --always --dirty 2>/dev/null || echo dev)
 BUILD_TIME ?= $(shell date -u +%Y-%m-%dT%H:%M:%SZ)
 LDFLAGS := -s -w -X main.version=$(VERSION) -X main.buildTime=$(BUILD_TIME) -X main.commit=$(shell git rev-parse --short HEAD 2>/dev/null || echo unknown)
 
-.PHONY: build clean test docker install build-linux build-linux-arm64 build-all
+.PHONY: build clean test docker install build-linux build-linux-arm64 build-linux-armv7 build-all
 
 # Build for current platform
 build:
@@ -19,8 +19,13 @@ build-linux-arm64:
 	CGO_ENABLED=0 GOOS=linux GOARCH=arm64 go build -ldflags "$(LDFLAGS)" -tags "with_quic with_utls with_wireguard with_acme with_clash_api" -o xboard-node-linux-arm64 ./cmd/xboard-node
 	CGO_ENABLED=0 GOOS=linux GOARCH=arm64 go build -ldflags "$(LDFLAGS)" -o xbctl-linux-arm64 ./cmd/xbctl
 
+# Build for Linux armv7
+build-linux-armv7:
+	CGO_ENABLED=0 GOOS=linux GOARCH=arm GOARM=7 go build -ldflags "$(LDFLAGS)" -tags "with_quic with_utls with_wireguard with_acme with_clash_api" -o xboard-node-linux-armv7 ./cmd/xboard-node
+	CGO_ENABLED=0 GOOS=linux GOARCH=arm GOARM=7 go build -ldflags "$(LDFLAGS)" -o xbctl-linux-armv7 ./cmd/xbctl
+
 # Build all platforms
-build-all: build-linux build-linux-arm64
+build-all: build-linux build-linux-arm64 build-linux-armv7
 
 # Run tests
 test:

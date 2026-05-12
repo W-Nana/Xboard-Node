@@ -330,6 +330,7 @@ detect_arch() {
     case "$raw" in
         x86_64|amd64) ARCH="amd64" ;;
         aarch64|arm64) ARCH="arm64" ;;
+        armv7l|armhf) ARCH="armv7" ;;
         *)
             log_error "Unsupported architecture: $raw"
             exit 1

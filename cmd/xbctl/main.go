@@ -395,7 +395,11 @@ func runUpgrade(args []string) error {
 	}
 
 	arch := runtime.GOARCH
-	if arch != "amd64" && arch != "arm64" {
+	archSuffix := arch
+	if arch == "arm" {
+		archSuffix = "armv7"
+	}
+	if arch != "amd64" && arch != "arm64" && arch != "arm" {
 		return fmt.Errorf("unsupported architecture: %s", arch)
 	}
 
@@ -406,8 +410,8 @@ func runUpgrade(args []string) error {
 	newBinary := filepath.Join(binaryDir, ".xboard-node.new")
 	newCLI := filepath.Join(cliDir, ".xbctl.new")
 
-	binaryURL := resolveDownloadURL(fmt.Sprintf("xboard-node-linux-%s", arch), version)
-	cliURL := resolveDownloadURL(fmt.Sprintf("xbctl-linux-%s", arch), version)
+	binaryURL := resolveDownloadURL(fmt.Sprintf("xboard-node-linux-%s", archSuffix), version)
+	cliURL := resolveDownloadURL(fmt.Sprintf("xbctl-linux-%s", archSuffix), version)
 
 	fmt.Printf("Downloading %s...\n", binaryURL)
 	if err := downloadFile(binaryURL, newBinary); err != nil {
